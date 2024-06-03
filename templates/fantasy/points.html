@@ -1,0 +1,107 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/points.css' %}" />
+
+<style>
+    .first-child-player{
+        left: 44%;
+        
+    }
+    .player:first-child {
+  left: 44%;
+  top: 10%;
+}
+
+.player:nth-child(2) {
+  left: 15%;
+  top: 30%;
+}
+
+.player:nth-child(3) {
+  left: 75%;
+  top: 30%;
+}
+
+.player:nth-child(4) {
+  left: 44%;
+  top: 55%;
+}
+
+.player:nth-child(5) {
+  left: 44%;
+  top: 80%;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="container text-center">
+
+    <div class="row mb-3 team-info">
+        <div class="col-md-9">
+            <h3>Team Name: {{ object.name }}</h3>
+            <h4>Manager: {{ object.user.full_name }}</h4>
+        </div>
+        <div class="col-md-3 game-week-select">
+            <label for="gameWeekSelect">Select Match Week:</label>
+            <select class="form-control" id="gameWeekSelect">
+              <option value="" {% if not selected_week_id %}selected{% endif %}>-------</option>
+              {% for week in game_weeks %}
+              <option value="{{ week.pk }}" {% if week.pk|stringformat:"s" == selected_week_id %}selected{% endif %}>{{ week.week }}</option>
+              {% endfor %}
+          </select>
+        </div>
+    </div>
+
+
+
+
+    <div class="container" id="container">
+      
+      
+      <div id="football-field">
+        <div class="total-points" style="left: 13%; top: 15%">
+          <span>All GW Points : {{object.points}}</span>
+        </div>
+
+        {% for player, points in player_and_points.items %}
+        <div class="player {% if forloop.last %}first-child-player{% endif %}"  >
+          <div class="player-avatar"></div>
+          <div class="player-detail">
+            <div class="player-points">{{points}}</div>
+            <div class="player-fullname">{{player}}</div>
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+   
+
+
+{% endblock content %}
+
+
+{% block script %}
+<script src="{% static 'js/points.js' %}"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const gameWeekSelect = document.getElementById("gameWeekSelect");
+  
+      gameWeekSelect.addEventListener("change", function() {
+          const selectedWeek = this.value;
+          const currentUrl = window.location.href;
+          const baseUrl = currentUrl.includes('?') ? currentUrl.split('?')[0] : currentUrl;
+          const newUrl = `${baseUrl}?gw=${selectedWeek}`;
+  
+          window.location.href = newUrl;
+      });
+  });
+  </script>
+  
+
+{% endblock %}
